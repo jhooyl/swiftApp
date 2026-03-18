@@ -1,41 +1,69 @@
 import SQLite
 import Foundation
 
-// Connection uses an internal serial queue, so it is safe to mark Sendable.
+// Keep this for Swift 6 Sendable requirement [cite: 17]
 extension Connection: @unchecked @retroactive Sendable {}
 
 struct Database {
-    // Definitions for the Table
-    static let tasks = Table("tasks")
-    static let id = Expression<Int64>("id")
-    static let title = Expression<String>("title")
-    static let isCompleted = Expression<Bool>("is_completed")
+    // 1. Table & Column Definitions (5 fields) [cite: 39, 45]
+    static let missions = Table("missions")
+    static let id = Expression<Int64>("id") 
+    static let name = Expression<String>("name")
+    static let agency = Expression<String>("agency")
+    static let destination = Expression<String>("destination")
+    static let launchYear = Expression<Int>("launchYear")
 
+    // 2. Setup the table [cite: 18, 47]
     static func setup() throws -> Connection {
         let db = try Connection("db.sqlite3")
-        try db.run(tasks.create(ifNotExists: true) { t in
+        try db.run(missions.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(title)
-            t.column(isCompleted, defaultValue: false)
+            t.column(name)
+            t.column(agency)
+            t.column(destination)
+            t.column(launchYear)
         })
         return db
     }
 
-    static func fetchAllTasks(db: Connection) throws -> [TaskItem] {
-        return try db.prepare(tasks).map { row in
-            TaskItem(id: row[id], title: row[title], isCompleted: row[isCompleted])
+    // 3. READ: Fetch all missions 
+    static func fetchAll(db: Connection) throws -> [SpaceMission] {
+        return try db.prepare(missions).map { row in
+            SpaceMission(
+                id: Int(row[id]), 
+                name: row[name], 
+                agency: row[agency], 
+                destination: row[destination], 
+                launchYear: row[launchYear]
+            )
         }
     }
 
-    static func addTask(db: Connection, title text: String) throws {
-        try db.run(tasks.insert(title <- text))
+    // 4. CREATE: Add a mission 
+    static func addMission(db: Connection, mission: SpaceMission) throws {
+        try db.run(missions.insert(
+            name <- mission.name,
+            agency <- mission.agency,
+            destination <- mission.destination,
+            launchYear <- mission.launchYear
+        ))
     }
-    
-    static func toggleTask(db: Connection, id targetId: Int64) throws {
-        let task = tasks.filter(id == targetId)
-        // Find current state to flip it
-        if let current = try db.pluck(task) {
-            try db.run(task.update(isCompleted <- !current[isCompleted]))
-        }
+
+    // 5. UPDATE: Modify an existing mission 
+    static func updateMission(db: Connection, mission: SpaceMission) throws {
+        guard let missionId = mission.id else { return }
+        let query = missions.filter(id == Int64(missionId))
+        try db.run(query.update(
+            name <- mission.name,
+            agency <- mission.agency,
+            destination <- mission.destination,
+            launchYear <- mission.launchYear
+        ))
+    }
+
+    // 6. DELETE: Remove a mission 
+    static func deleteMission(db: Connection, missionId: Int) throws {
+        let query = missions.filter(id == Int64(missionId))
+        try db.run(query.delete())
     }
 }
