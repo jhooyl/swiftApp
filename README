@@ -1,0 +1,49 @@
+Space Mission Control :
+-------------------------
+Swift Web CRUD Application | iOS Course 2026
+----------------------------------------------
+
+A full-stack web application built with Swift 6.2, Hummingbird 2, and SQLite to manage a global registry of interstellar space missions.
+
+📖 Project Overview
+The purpose of this application is to demonstrate a complete Model-View-Controller (MVC) architecture using the Swift programming language. The app allows users to catalog and track space exploration data, including mission names, aerospace agencies, planetary destinations, and launch years.
+
+
+🛠 Features & Requirements :
+----------------------------
+
+Data Model: A custom SpaceMission struct with 5 fields (ID, Name, Agency, Destination, Year) conforming to Codable and Sendable.
+
+Full CRUD Operations:
+
+Create: Add missions via a validated web form.
+
+Read: View all registered missions in a dynamic, responsive table.
+
+Update: Modify mission parameters through a dedicated edit interface.
+
+Delete: Remove missions from the registry with a single click.
+
+Search & Filter : A functional search bar that filters the mission list by Name or Destination using URL query parameters.
+
+Server-Side Validation : Implementation of guard statements to prevent empty entries and ensure launch years are logically valid (post-1950).
+
+Enhanced UI/UX : Styled with Pico CSS, featuring a navigation bar, organized grid layouts, and intuitive action buttons.
+
+Routes:
+-------
+- `GET /`: View all missions (supports `?search=` query).
+- `POST /add`: Create a new mission.
+- `GET /edit/:id`: View the edit form for a mission.
+- `POST /update/:id`: Update mission details.
+- `POST /delete/:id`: Delete a mission.
+
+⚙️ How to Run :
+----------------
+1- Open the terminal in your GitHub Codespace.
+
+2- Build the project: ./build.sh
+
+3- Start the server: ./run.sh
+
+4- Access the app via the port 8080 popup.
