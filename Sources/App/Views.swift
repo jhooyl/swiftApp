@@ -2,8 +2,7 @@ import Hummingbird
 import Foundation
 
 struct Views {
-    // 1. The Main Page (Read & Create Operations)
-// 1. Updated Main Page with Search Bar
+    // 1. The main page
     static func renderIndex(missions: [SpaceMission], searchQuery: String? = nil) -> HTML {
         let rows = missions.map { mission in
             """
@@ -38,7 +37,7 @@ struct Views {
         <body class="container" style="padding-top: 2rem;">
             <header>
                 <nav>
-                  <ul><li><strong>🚀 Mission Control</strong></li></ul>
+                  <ul><li><strong> Mission Control</strong></li></ul>
                   <ul>
                     <li><a href="/" class="secondary">View All</a></li>
                   </ul>
@@ -91,7 +90,7 @@ struct Views {
         """)
     }
 
-    // 2. The Edit Page (Update Operation)
+    // 2. The edit page
     static func renderEdit(mission: SpaceMission) -> HTML {
         return HTML(content: """
         <!DOCTYPE html>
@@ -126,7 +125,7 @@ struct Views {
     }
 }
 
-// Helper to make Hummingbird accept our HTML strings [cite: 51]
+// Helper to make Hummingbird accept our HTML strings
 struct HTML: ResponseGenerator {
     let content: String
     func response(from request: Request, context: some RequestContext) throws -> Response {

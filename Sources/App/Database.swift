@@ -1,11 +1,9 @@
 import SQLite
 import Foundation
 
-// Keep this for Swift 6 Sendable requirement [cite: 17]
 extension Connection: @unchecked @retroactive Sendable {}
 
 struct Database {
-    // 1. Table & Column Definitions (5 fields) [cite: 39, 45]
     static let missions = Table("missions")
     static let id = Expression<Int64>("id") 
     static let name = Expression<String>("name")
@@ -13,7 +11,7 @@ struct Database {
     static let destination = Expression<String>("destination")
     static let launchYear = Expression<Int>("launchYear")
 
-    // 2. Setup the table [cite: 18, 47]
+    // setup the table 
     static func setup() throws -> Connection {
         let db = try Connection("db.sqlite3")
         try db.run(missions.create(ifNotExists: true) { t in
@@ -26,7 +24,7 @@ struct Database {
         return db
     }
 
-    // 3. READ: Fetch all missions 
+    // fetch all missions 
     static func fetchAll(db: Connection) throws -> [SpaceMission] {
         return try db.prepare(missions).map { row in
             SpaceMission(
@@ -39,7 +37,7 @@ struct Database {
         }
     }
 
-    // 4. CREATE: Add a mission 
+    // add a mission 
     static func addMission(db: Connection, mission: SpaceMission) throws {
         try db.run(missions.insert(
             name <- mission.name,
@@ -49,7 +47,7 @@ struct Database {
         ))
     }
 
-    // 5. UPDATE: Modify an existing mission 
+    // modify an existing mission 
     static func updateMission(db: Connection, mission: SpaceMission) throws {
         guard let missionId = mission.id else { return }
         let query = missions.filter(id == Int64(missionId))
@@ -61,7 +59,7 @@ struct Database {
         ))
     }
 
-    // 6. DELETE: Remove a mission 
+    // remove a mission 
     static func deleteMission(db: Connection, missionId: Int) throws {
         let query = missions.filter(id == Int64(missionId))
         try db.run(query.delete())
