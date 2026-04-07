@@ -42,7 +42,7 @@ struct Views {
                     <li><a href="/" class="secondary">View All</a></li>
                   </ul>
                 </nav>
-                <h1>Interstellar Registry</h1>
+                <h1>🚀 Interstellar Registry</h1>
             </header>
             
             <main>
